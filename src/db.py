@@ -7,9 +7,7 @@ from sqlmodel import create_engine, SQLModel, Session
 
 load_dotenv()
 
-engine = create_engine(
-    f"{os.getenv('DATABASE')}://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
-)
+engine = create_engine(os.getenv("DB_URL"))
 
 
 def create_db_and_tables():
