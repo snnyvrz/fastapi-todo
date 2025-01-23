@@ -31,7 +31,9 @@ async def read_root():
 
 @app.post("/signup/", response_model=User)
 async def create_user(user: UserCreate, session: SessionDep):
-    db_user = User.model_validate(user)
+    db_user = UserCreate.model_validate(user)
+    if db_user.password != db_user.confirm_password:
+        raise ValueError("Passwords do not match")
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
