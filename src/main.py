@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from passlib.context import CryptContext
+
 from src.db import create_db_and_tables, SessionDep
 from src.models import User, UserCreate
 
@@ -24,6 +26,9 @@ def on_startup():
     create_db_and_tables()
 
 
+crypto_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
 @app.get("/")
 async def read_root():
     return {"Hello": "Sina"}
@@ -31,9 +36,15 @@ async def read_root():
 
 @app.post("/signup/", response_model=User)
 async def create_user(user: UserCreate, session: SessionDep):
-    db_user = UserCreate.model_validate(user)
-    if db_user.password != db_user.confirm_password:
+    if user.password != user.confirm_password:
         raise ValueError("Passwords do not match")
+
+    del user.confirm_password
+
+    db_user = User.model_validate(
+        user, update={"hashed_password": crypto_context.hash(user.password)}
+    )
+
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
