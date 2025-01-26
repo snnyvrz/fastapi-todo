@@ -1,13 +1,16 @@
-import os
 from typing import Annotated
 
-from dotenv import load_dotenv
 from fastapi import Depends
 from sqlmodel import create_engine, SQLModel, Session
 
-load_dotenv()
+from src.config import Settings, get_settings
 
-engine = create_engine(os.getenv("DB_URL"))
+
+def get_engine(settings: Settings = get_settings()):
+    return create_engine(settings.DATABASE_URL)
+
+
+engine = get_engine()
 
 
 def create_db_and_tables():
