@@ -3,7 +3,7 @@ from passlib.context import CryptContext
 from sqlmodel import select
 
 from src.db import SessionDep
-from src.models import User, UserCreate
+from src.models import User, UserCreate, UserLogin, UserPublic
 
 api_router = APIRouter()
 
@@ -16,7 +16,7 @@ async def read_root():
     return {"Hello": "Sina"}
 
 
-@api_router.post("/signup/", response_model=User)
+@api_router.post("/signup/", response_model=UserPublic)
 async def create_user(user: UserCreate, session: SessionDep):
     statement = select(User).where(User.username == user.username)
     user_object = session.exec(statement).first()
@@ -37,3 +37,19 @@ async def create_user(user: UserCreate, session: SessionDep):
     session.commit()
     session.refresh(db_user)
     return db_user
+
+
+@api_router.post("/signin/", response_model=UserPublic)
+async def login_user(user: UserLogin, session: SessionDep):
+    statement = select(User).where(User.username == user.username)
+    user_obj = session.exec(statement).first()
+
+    if not user_obj:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not crypto_context.verify(user.password, user_obj.hashed_password):
+        raise HTTPException(status_code=401, detail="Incorrect password")
+
+    del user_obj.hashed_password
+
+    return user_obj
