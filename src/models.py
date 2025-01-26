@@ -21,3 +21,8 @@ class UserPublic(UserBase):
 
 class User(UserPublic, table=True):
     hashed_password: str
+
+
+class Token(SQLModel):
+    access_token: str
+    refresh_token: str

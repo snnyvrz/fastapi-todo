@@ -1,6 +1,8 @@
 import os
 from functools import lru_cache
+from typing import Annotated
 
+from fastapi import Depends
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -10,6 +12,9 @@ class Settings(BaseSettings):
 
     DB_URL: str
     TEST_DB_URL: str
+    ACCESS_TOKEN_EXPIRY: int
+    REFRESH_TOKEN_EXPIRY: int
+    SECRET_KEY: str
 
     @computed_field
     @property
@@ -22,3 +27,6 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings():
     return Settings()
+
+
+SettingsDep = Annotated[Settings, Depends(get_settings)]
