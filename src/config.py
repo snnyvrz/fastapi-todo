@@ -30,3 +30,5 @@ def get_settings():
 
 
 SettingsDep = Annotated[Settings, Depends(get_settings)]
+
+settings = get_settings()

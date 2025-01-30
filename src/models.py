@@ -1,18 +1,11 @@
 import uuid
 
 from sqlmodel import Field, SQLModel
+from pydantic import BaseModel
 
 
 class UserBase(SQLModel):
     username: str = Field(unique=True, index=True)
-
-
-class UserLogin(UserBase):
-    password: str
-
-
-class UserCreate(UserLogin):
-    confirm_password: str
 
 
 class UserPublic(UserBase):
@@ -23,6 +16,5 @@ class User(UserPublic, table=True):
     hashed_password: str
 
 
-class Token(SQLModel):
-    access_token: str
-    refresh_token: str
+class TokenData(BaseModel):
+    user_id: str | None = None
