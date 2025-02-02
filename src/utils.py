@@ -18,7 +18,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/signin")
 
 def create_token(type: Literal["access", "refresh"], subject: str) -> str:
     expire = datetime.now(timezone.utc) + (
-        timedelta(minutes=settings.ACCESS_TOKEN_EXPIRY)
+        timedelta(seconds=settings.ACCESS_TOKEN_EXPIRY)
         if type == "access"
         else timedelta(days=settings.REFRESH_TOKEN_EXPIRY)
     )

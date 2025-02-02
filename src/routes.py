@@ -17,11 +17,6 @@ api_router = APIRouter(prefix="/auth")
 crypto_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-@api_router.get("/")
-async def read_root():
-    return {"Hello": "Sina"}
-
-
 @api_router.get("/me/", response_model=UserPublic)
 async def get_me(current_user: Annotated[User, Depends(get_current_user)]):
     return current_user
