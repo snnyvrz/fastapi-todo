@@ -49,7 +49,12 @@ async def create_user(
 
     refresh_token = create_token(type="refresh", subject=db_user.id)
 
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        max_age=60 * 60 * 24 * 7,
+    )
 
     return {"access_token": access_token}
 
@@ -75,7 +80,12 @@ async def login_user(
 
     refresh_token = create_token(type="refresh", subject=user_obj.id)
 
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        max_age=60 * 60 * 24 * 7,
+    )
 
     return {"access_token": access_token}
 
